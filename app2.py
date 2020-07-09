@@ -9,6 +9,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask import Flask
 from sqlalchemy.orm import Query
+from sqlalchemy.sql.operators import ColumnOperators
 
 app = Flask(__name__)
 # 初始化 db 数据库对象  吧app和db绑定在一起，
@@ -95,12 +96,36 @@ try:
 except:
 	db.session.rollback()
 # query  sqlalchemy 下的
-Query
+# 查询和过滤
+# 可以通过官方文档或者query原码查看相关函数
+# orm
+# 1，所有的all()  查询满足条件的所有字段
+# users= User.query.where().group_by().offset().all() # 支持链式调用
+users = User.query.all()
+# 基本原理是每个方法都返回一个统一的方法，之后就可以一直调用下去
+# 直到返回的不再是同一个对象或者方法
+
+# 2,first  拿到查询的第一个结果
+user = User.query.first()
+
+# 3，get方法 要通过主键去获取 主键唯一，是一个位置参数
+user = User.query.get(5)  # 位置传参，不能
+# 表内有多个主键的情况下，使用元祖传入进去
+# 或者使用字典 kv方式传入进去
+# 如果没获取到，会返回一个None，获取到的话会返回一个模型
+# 如果没返回数据，想要其报错的话，
+Query.get_or_404()
 
 
+# 4,filter_by()
+#   第一种 使用filter_by方法
+Query.filter_by()
 
-
-
+# 5 filter() 进行更为复杂的查询
+Query.filter()  # 位置传参
+User.query.filter(User.email.endswith("xxx")).all()
+# 支持字段很多，在ColumnOperators中进行确认
+ColumnOperators
 # -----------------------------------------------------
 
 
